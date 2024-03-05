@@ -45,10 +45,10 @@ async def update_avatar(file: UploadFile = File(),
                         db: AsyncSession = Depends(get_db)):
     """
     The update_avatar function updates the avatar of a user.
-        Args:
-            file (UploadFile): The new avatar image to be uploaded.
-            user (User): The current logged in user, which is used to identify the account that will have its avatar updated. 
-                This argument is automatically provided by FastAPI's dependency injection system when this function is called from an HTTP request handler, as it depends on auth_service.get_current_user().
+    Args:
+    file (UploadFile): The new avatar image to be uploaded.
+    user (User): The current logged in user, which is used to identify the account that will have its avatar updated. 
+    This argument is automatically provided by FastAPI's dependency injection system when this function is called from an HTTP request handler, as it depends on auth_service.get_current_user().
     
     :param file: UploadFile: Get the file from the request
     :param user: User: Get the current user

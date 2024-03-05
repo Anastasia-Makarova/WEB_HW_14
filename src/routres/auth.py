@@ -99,11 +99,11 @@ async def refresh_token(credentials: HTTPAuthorizationCredentials = Security(get
 async def confirmed_email(token: str, db: AsyncSession = Depends(get_db)):
     """
     The confirmed_email function is used to confirm a user's email address.
-        It takes the token from the URL and uses it to get the user's email address.
-        Then, it checks if that user exists in our database, and if they do not exist, 
-        we raise an HTTPException with a status code of 400 (Bad Request) and detail message &quot;Verification error&quot;.
-         If they do exist in our database but their confirmed field is already True (meaning their email has already been confirmed), 
-         then we return a JSON response with message &quot;Your email is already confirmed&quot;. Otherwise, we call
+    It takes the token from the URL and uses it to get the user's email address.
+    Then, it checks if that user exists in our database, and if they do not exist, 
+    we raise an HTTPException with a status code of 400 (Bad Request) and detail message &quot;Verification error&quot;.
+    If they do exist in our database but their confirmed field is already True (meaning their email has already been confirmed), 
+    then we return a JSON response with message &quot;Your email is already confirmed&quot;. Otherwise, we call
     
     :param token: str: Get the token from the url
     :param db: AsyncSession: Pass the database session to the function
