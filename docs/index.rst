@@ -37,7 +37,7 @@ REST API repository Users
 
 REST API routes Contacts
 ============================================
-.. automodule:: src.routes.contacts
+.. automodule:: src.routres.contacts
   :members:
   :undoc-members:
   :show-inheritance:
@@ -45,7 +45,7 @@ REST API routes Contacts
 
 REST API routes Users
 ============================================
-.. automodule:: src.routes.users
+.. automodule:: src.routres.users
   :members:
   :undoc-members:
   :show-inheritance:
@@ -53,7 +53,7 @@ REST API routes Users
 
 REST API routes Auth
 ============================================
-.. automodule:: src.routes.auth
+.. automodule:: src.routres.auth
   :members:
   :undoc-members:
   :show-inheritance:

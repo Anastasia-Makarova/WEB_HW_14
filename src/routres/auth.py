@@ -106,8 +106,8 @@ async def confirmed_email(token: str, db: AsyncSession = Depends(get_db)):
          then we return a JSON response with message &quot;Your email is already confirmed&quot;. Otherwise, we call
     
     :param token: str: Get the token from the url
-    :param db: AsyncSession: Access the database
-    :return: A dictionary with the key message and value email confirmed
+    :param db: AsyncSession: Pass the database session to the function
+    :return: A dictionary with a message key
     :doc-author: Trelent
     """
     email = await auth_service.get_email_from_token(token)

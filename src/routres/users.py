@@ -51,9 +51,9 @@ async def update_avatar(file: UploadFile = File(),
                 This argument is automatically provided by FastAPI's dependency injection system when this function is called from an HTTP request handler, as it depends on auth_service.get_current_user().
     
     :param file: UploadFile: Get the file from the request
-    :param user: User: Get the current user from the database
-    :param db: AsyncSession: Pass the database session to the function
-    :return: A user object, which is the same as the user parameter
+    :param user: User: Get the current user
+    :param db: AsyncSession: Get the database session
+    :return: The user object
     :doc-author: Trelent
     """
     public_id = f"Web18/{user.email}"

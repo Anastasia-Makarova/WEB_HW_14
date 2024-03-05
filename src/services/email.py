@@ -32,8 +32,8 @@ async def send_email(email: EmailStr, username: str, host: str):
         host (str): The hostname that this application is running on, e.g., &quot;localhost&quot; or &quot;127.0.0.2&quot;. 
     
     :param email: EmailStr: Validate the email address
-    :param username: str: Pass the username to the template
-    :param host: str: Pass the hostname of the server to send_email function
+    :param username: str: Pass the username to the email template
+    :param host: str: Pass in the hostname of the server
     :return: A coroutine object
     :doc-author: Trelent
     """
