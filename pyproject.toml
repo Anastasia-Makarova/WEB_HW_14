@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "web-hw-14"
+version = "0.1.0"
+description = ""
+authors = ["Anastasia-Makarova <140186425+Anastasia-Makarova@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+sphinx = "^7.2.6"
+fastapi = "^0.110.0"
+fastapi-limiter = "^0.1.6"
+sqlalchemy = "^2.0.28"
+uvicorn = "^0.27.1"
+pydantic = "^2.6.3"
+pydantic-settings = "^2.2.1"
+libgravatar = "^1.0.4"
+cloudinary = "^1.39.0"
+passlib = "^1.7.4"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+fastapi-mail = "^1.4.1"
+
+
+[tool.poetry.group.dev.dependencies]
+sphinx = "^7.2.6"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

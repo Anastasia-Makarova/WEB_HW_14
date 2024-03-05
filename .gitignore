@@ -1,5 +1,6 @@
 test*.py
 .env
+venv
 postgres-data
 
 

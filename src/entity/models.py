@@ -18,10 +18,17 @@ class Contact(Base):
     email: Mapped[str] = mapped_column(String(40))
     birthday: Mapped[str] = mapped_column(Date)
     notes: Mapped[str] = mapped_column(String(200))
-    created_at: Mapped[date] = mapped_column('created_at', DateTime, default=func.now(), nullable=True)
-    updated_at: Mapped[date] = mapped_column('updated_at', DateTime, default=func.now(), onupdate=func.now(), nullable=True)
+    created_at: Mapped[date] = mapped_column('created_at', DateTime, 
+                                             default=func.now(), 
+                                             nullable=True)
+    updated_at: Mapped[date] = mapped_column('updated_at', DateTime, 
+                                             default=func.now(), 
+                                             onupdate=func.now(), 
+                                             nullable=True)
     user_id: Mapped[int] = mapped_column (Integer, ForeignKey('users.id'), nullable=True)
-    user: Mapped['User'] = relationship('User', backref='contacts', lazy='joined' )
+    user: Mapped['User'] = relationship('User', 
+                                        backref='contacts', 
+                                        lazy='joined' )
 
 
 class User(Base):
@@ -32,6 +39,11 @@ class User(Base):
     password: Mapped[str] = mapped_column(String(255), nullable=False)
     avatar: Mapped[str] = mapped_column(String(255), nullable=True)
     refresh_token: Mapped[str] = mapped_column(String(255), nullable=True)
-    created_at: Mapped[date] = mapped_column('created_at', DateTime, default=func.now())
-    updated_at: Mapped[date] = mapped_column('updated_at', DateTime, default=func.now(), onupdate=func.now())
-    confirmed: Mapped[bool] = mapped_column(Boolean, default=False, nullable=True) 
+    created_at: Mapped[date] = mapped_column('created_at', DateTime, 
+                                             default=func.now())
+    updated_at: Mapped[date] = mapped_column('updated_at', DateTime, 
+                                             default=func.now(), 
+                                             onupdate=func.now())
+    confirmed: Mapped[bool] = mapped_column(Boolean, 
+                                            default=False, 
+                                            nullable=True) 

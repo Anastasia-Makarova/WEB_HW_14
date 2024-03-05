@@ -63,9 +63,9 @@ app.add_middleware(
     allow_headers= ["*"]   #     [*] for all or ["Authorization"]
 )
 
-BASE_DIR = Path('.')
-
-app.mount('/static', StaticFiles(directory=BASE_DIR /'src' / 'static'), name='static')
+BASE_DIR = Path(__file__).parent
+directory = BASE_DIR.joinpath("src").joinpath("static")
+app.mount('/static', StaticFiles(directory=directory), name='static')
 
 app.include_router(auth.router, prefix='/api')
 app.include_router(users.router, prefix='/api')
