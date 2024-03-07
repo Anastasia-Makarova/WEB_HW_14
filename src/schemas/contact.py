@@ -1,7 +1,7 @@
 from typing import Optional
 from datetime import datetime, date
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
 from src.schemas.user import UserResponse
 
@@ -20,6 +20,7 @@ class ContactResponse(ContactSchema):
     created_at: datetime | None
     updated_at: datetime | None
     user: UserResponse | None
+    
+    model_config = ConfigDict(from_attributes = True)
 
-    class Config:
-        from_attributes = True
+    

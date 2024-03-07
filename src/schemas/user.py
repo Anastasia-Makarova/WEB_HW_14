@@ -1,7 +1,7 @@
 from typing import Optional
 from datetime import datetime, date
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
 
 class UserSchema(BaseModel):
@@ -16,11 +16,10 @@ class UserResponse(BaseModel):
     username: str
     email: str
     avatar: str
+    
+    model_config = ConfigDict(from_attributes = True)
 
-    class Config:
-        from_attributes = True
-
-
+    
 class TokenSchema(BaseModel):
     access_token: str
     refresh_token: str
