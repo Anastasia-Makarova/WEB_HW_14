@@ -1,7 +1,7 @@
-test*.py
 .env
 venv
 postgres-data
+
 
 
 # Byte-compiled / optimized / DLL files
