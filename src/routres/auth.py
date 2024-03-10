@@ -11,6 +11,7 @@ from src.database.db import get_db
 from src.repository import users as repository_users
 from src.schemas.user  import UserSchema, UserResponse, TokenSchema, RequestEmail
 from src.services.auth import auth_service
+from src.config import messages
   
 
 router = APIRouter(prefix='/auth', tags=['auth'])
@@ -35,7 +36,7 @@ async def signup(body: UserSchema,
     """
     exist_user = await repository_users.get_user_by_email(body.email, db)
     if exist_user:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Account already exists")
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=messages.ACCOUNT_EXIST)
     body.password = auth_service.get_password_hash(body.password)
     new_user = await repository_users.create_user(body, db)
     bt.add_task(send_email, new_user.email, new_user.username, str(request.base_url))
