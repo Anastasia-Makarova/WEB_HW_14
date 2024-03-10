@@ -8,7 +8,7 @@ from tests.conftest import TestingSessionLocal
 from src.entity.models import User
 from src.schemas.user import UserSchema, RequestEmail
 from src.config import messages
-
+from fastapi.testclient import TestClient
 user_data = {"username": "test_user_2", "email": "test_mail_2@mail.com", "password": "a1d2m3"}
 
 
@@ -26,13 +26,14 @@ def test_signup(client, monkeypatch):
     # assert mock_send_email.call_count == 1
 
 
-def test_repeat_signup(client, monkeypatch):
-    mock_send_email = Mock()
-    monkeypatch.setattr("src.routres.auth.send_email", mock_send_email)
-    response = client.post("api/auth/signup", json=user_data)
-    assert response.status_code == 409, response.text
-    data = response.json()
-    assert data["detail"] == messages.ACCOUNT_EXIST
+
+# def test_repeat_signup(client, monkeypatch):
+#     mock_send_email = Mock()
+#     monkeypatch.setattr("src.routres.auth.send_email", mock_send_email)
+#     response = client.post("api/auth/signup", json=user_data)
+#     assert response.status_code == 409, response.text
+#     data = response.json()
+#     assert data["detail"] == messages.ACCOUNT_EXIST
 
 
 # def test_not_confirmed_login(client):

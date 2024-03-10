@@ -96,7 +96,7 @@ async def get_contact_by_birthday(n:int, db: AsyncSession, user: User):
     :doc-author: Trelent
     """
     start = datetime.now()
-    seven_days_later = start+ timedelta(days=n)
+    seven_days_later = start + timedelta(days=n)
     contacts_with_bdays = []
 
     stmt = select(Contact).filter_by(user=user).where(Contact.birthday != None)

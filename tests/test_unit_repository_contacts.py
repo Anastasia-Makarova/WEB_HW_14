@@ -1,7 +1,7 @@
 import unittest
 import pytest
 from unittest.mock import MagicMock, AsyncMock, patch
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -95,42 +95,29 @@ class TestAsyncContacts(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result, contact)
 
 
-    # async def test_get_contact_by_birthday(self):
-    #     # Define a fixed date for testing
-    #     fixed_date = datetime(2024, 3, 1).date()
+    async def test_get_contact_by_birthday(self):
+        contacts = [
+            Contact(id=1,
+                    name='test_name_1',
+                    surname='test_surname_1',
+                    phone_number='+380501111111',
+                    email='testmail1@mail.com',
+                    birthday=datetime.strptime('1998-03-12', '%Y-%m-%d'),
+                    notes='note_1'),
+            Contact(id=2,
+                    name='test_name_2',
+                    surname='test_surname_2',
+                    phone_number='+380502222222',
+                    email='testmail2@mail.com',
+                    birthday=datetime.strptime('1987-03-17', '%Y-%m-%d'),
+                    notes='note_2')
+        ]
 
-    #     # Mocking datetime module
-    #     with patch('src.repository.contacts.datetime') as mocked_datetime:
-    #         mocked_datetime.now.return_value = fixed_date
-
-    #         # Define the contacts with birthdays within the next 7 days
-    #         contact_with_birthday_within_7_days = [
-    #             Contact(id=1,
-    #                     name='test_name_1',
-    #                     surname='test_surname_1',
-    #                     phone_number='+380501111111',
-    #                     email='testmail1@mail.com',
-    #                     birthday=fixed_date + timedelta(days=3),  # Birthday 3 days from now
-    #                     notes='note_1'),
-    #             Contact(id=2,
-    #                     name='test_name_2',
-    #                     surname='test_surname_2',
-    #                     phone_number='+380502222222',
-    #                     email='testmail2@mail.com',
-    #                     birthday=fixed_date + timedelta(days=6),  # Birthday 6 days from now
-    #                     notes='note_2')
-    #         ]
-
-    #         # Mock the execute method of the session
-    #         mocked_contacts = MagicMock()
-    #         mocked_contacts.scalars.return_value.all.return_value = contact_with_birthday_within_7_days
-    #         self.session.execute.return_value = mocked_contacts
-
-    #         # Call the function
-    #         result = await get_contact_by_birthday(7, self.session, self.user)
-
-    #         # Assert that the returned result matches the expected contacts
-    #         self.assertEqual(result, contact_with_birthday_within_7_days)
+        mocked_contact = MagicMock()
+        mocked_contact.scalars.return_value.all.return_value = contacts
+        self.session.execute.return_value = mocked_contact
+        result = await get_contact_by_birthday(n=7, db=self.session, user=self.user)
+        self.assertEqual(result, contacts)
             
 
     async def test_get_contact(self):
