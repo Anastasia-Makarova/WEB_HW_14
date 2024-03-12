@@ -9,7 +9,13 @@ from src.entity.models import User
 from src.schemas.user import UserSchema, RequestEmail
 from src.config import messages
 from fastapi.testclient import TestClient
+
 user_data = {"username": "test_user_2", "email": "test_mail_2@mail.com", "password": "a1d2m3"}
+
+
+# @pytest.fixture
+# def mock_send_email():
+#     return Mock()
 
 
 def test_signup(client, monkeypatch):
@@ -27,13 +33,13 @@ def test_signup(client, monkeypatch):
 
 
 
-# def test_repeat_signup(client, monkeypatch):
-#     mock_send_email = Mock()
+# def test_repeat_signup(client, monkeypatch, mock_send_email):
 #     monkeypatch.setattr("src.routres.auth.send_email", mock_send_email)
 #     response = client.post("api/auth/signup", json=user_data)
 #     assert response.status_code == 409, response.text
 #     data = response.json()
 #     assert data["detail"] == messages.ACCOUNT_EXIST
+#     assert not mock_send_email.called
 
 
 # def test_not_confirmed_login(client):
@@ -41,7 +47,10 @@ def test_signup(client, monkeypatch):
 #                            data={"username": user_data.get("email"), "password": user_data.get("password")})
 #     assert response.status_code == 401, response.text
 #     data = response.json()
-#     assert data["detail"] == "Email not confirmed"
+#     assert data["detail"] == messages.EMAIL_NOT_CONFIRMED
+    
+
+
 
 
 @pytest.mark.asyncio
@@ -63,20 +72,29 @@ async def test_login(client):
 
 
     
-# def test_wrong_password_login(client):
+# def test_wrong_login_password(client):
 #     response = client.post("api/auth/login",
-#                            data={"username": user_data.get("email"), "password": "password"})
+#                            data={"username": user_data.get("email"), "password": "idontknow"})
 #     assert response.status_code == 401, response.text
 #     data = response.json()
-#     assert data["detail"] == "Invalid password"
+#     assert data["detail"] == messages.INVALID_PASSWORD
 
 
 # def test_wrong_email_login(client):
-    # response = client.post("api/auth/login",
-#                            data={"username": "email", "password": user_data.get("password")})
+#     response = client.post("api/auth/login",
+#                            data={"username": "email@gmail.com", "password": user_data.get("password")})
 #     assert response.status_code == 401, response.text
 #     data = response.json()
-#     assert data["detail"] == "Invalid email"
+#     assert data["detail"] == messages.INVALID_EMAIL
+    
+
+@pytest.mark.asyncio
+async def test_confirmed_email(get_email_token, client): 
+    token = get_email_token
+    response = client.get(f"api/auth/confirmed_email/{token}")
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert data["message"] == messages.EMAIL_ALREADY_CONFIRMED
 
 
 def test_validation_error_login(client):
@@ -85,4 +103,23 @@ def test_validation_error_login(client):
     assert response.status_code == 422, response.text
     data = response.json()
     assert "detail" in data
+
+
+
+@pytest.mark.asyncio  
+async def test_request_email(client, monkeypatch):
+    async with TestingSessionLocal() as session:
+        current_user = await session.execute(select(User).where(User.email == user_data.get("email")))
+        current_user = current_user.scalar_one_or_none()
+        if current_user:
+            current_user.confirmed = False
+            await session.commit()        
+        mock_send_email = Mock()
+        monkeypatch.setattr("src.routres.auth.request_email", mock_send_email)
+        response = client.post("api/auth/request_email", json=user_data)
+        assert response.status_code == 200, response.text
+        data = response.json()
+        assert data["message"] == messages.CHECK_EMAIL
+        assert "password" not in data
+
 

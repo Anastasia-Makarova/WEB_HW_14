@@ -102,7 +102,7 @@ class TestAsyncContacts(unittest.IsolatedAsyncioTestCase):
                     surname='test_surname_1',
                     phone_number='+380501111111',
                     email='testmail1@mail.com',
-                    birthday=datetime.strptime('1998-03-12', '%Y-%m-%d'),
+                    birthday=datetime.strptime('1998-03-16', '%Y-%m-%d'),
                     notes='note_1'),
             Contact(id=2,
                     name='test_name_2',

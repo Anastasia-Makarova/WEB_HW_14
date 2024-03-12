@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from pathlib import Path
 
 import uvicorn
+# from contextlib import asynccontextmanager
 from fastapi import Depends, FastAPI, Request, status
 from fastapi_limiter import FastAPILimiter
 from fastapi_limiter.depends import RateLimiter
@@ -20,7 +21,15 @@ from src.database.db import get_db
 from src.routres import contacts, auth, users
 from src.config.config import config
 
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#     r = await redis.Redis(host=config.REDIS_DOMAIN, port=config.REDIS_PORT, db=0, 
+#                           password=config.REDIS_PASSWORD, encoding="utf-8",
+#                           decode_responses=True)
+#     delay = await FastAPILimiter.init(r)
+#     yield delay
 
+# app = FastAPI(lifespan=lifespan)
 app = FastAPI()
 
 '''IP blacklist'''
