@@ -3,19 +3,20 @@ import json
 
 import pytest
 from sqlalchemy import select
-from tests.conftest import TestingSessionLocal
+from tests.conftest import TestingSessionLocal, user_data
 
 from src.entity.models import User
 from src.schemas.user import UserSchema, RequestEmail
 from src.config import messages
 from fastapi.testclient import TestClient
 
-user_data = {"username": "test_user_2", "email": "test_mail_2@mail.com", "password": "a1d2m3"}
+# user_data = {"username": "test_user_2", "email": "test_mail_2@mail.com", "password": "a1d2m3"}
 
 
-# @pytest.fixture
-# def mock_send_email():
-#     return Mock()
+
+@pytest.fixture
+def mock_send_email():
+    return Mock()
 
 
 def test_signup(client, monkeypatch):
@@ -33,13 +34,19 @@ def test_signup(client, monkeypatch):
 
 
 
-# def test_repeat_signup(client, monkeypatch, mock_send_email):
-#     monkeypatch.setattr("src.routres.auth.send_email", mock_send_email)
-#     response = client.post("api/auth/signup", json=user_data)
-#     assert response.status_code == 409, response.text
-#     data = response.json()
-#     assert data["detail"] == messages.ACCOUNT_EXIST
-#     assert not mock_send_email.called
+def test_repeat_signup(client, monkeypatch, mock_send_email):
+    monkeypatch.setattr("src.routres.auth.send_email", mock_send_email)
+    print('line1')
+    response = client.post("api/auth/signup", json=user_data)
+    print('line2')
+    assert response.status_code == 409, response.text
+    print('line3')
+    data = response.json()
+    print('line4')
+    assert data["detail"] == messages.ACCOUNT_EXIST
+    print('line5')
+    assert not mock_send_email.called
+    print('done')
 
 
 # def test_not_confirmed_login(client):
