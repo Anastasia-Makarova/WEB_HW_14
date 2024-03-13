@@ -48,16 +48,13 @@ def test_repeat_signup(client, monkeypatch, mock_send_email, capsys):
         assert f"409: {messages.ACCOUNT_EXIST}" in stdout_output
 
 
-
-# def test_not_confirmed_login(client):
-#     response = client.post("api/auth/login",
-#                            data={"username": user_data.get("email"), "password": user_data.get("password")})
-#     assert response.status_code == 401, response.text
-#     data = response.json()
-#     assert data["detail"] == messages.EMAIL_NOT_CONFIRMED
-    
-
-
+def test_not_confirmed_login(client, capsys):
+    try:
+        client.post("api/auth/login", data={"username": user_data.get("email"), "password": user_data.get("password")})
+    except Exception as err:
+        captured = capsys.readouterr()
+        stdout_output = captured.out
+        assert f"401: {messages.EMAIL_NOT_CONFIRMED}" in stdout_output
 
 
 @pytest.mark.asyncio
@@ -77,22 +74,24 @@ async def test_login(client):
     assert "refresh_token" in data
     assert "token_type" in data
 
-
     
-# def test_wrong_login_password(client):
-#     response = client.post("api/auth/login",
-#                            data={"username": user_data.get("email"), "password": "idontknow"})
-#     assert response.status_code == 401, response.text
-#     data = response.json()
-#     assert data["detail"] == messages.INVALID_PASSWORD
+def test_wrong_login_password(client, capsys):
+    try:
+        response = client.post("api/auth/login",
+                           data={"username": user_data.get("email"), "password": "idontknow"})
+    except Exception as err:
+        captured = capsys.readouterr()
+        stdout_output = captured.out
+        assert f"401: {messages.INVALID_PASSWORD}" in stdout_output
 
 
-# def test_wrong_email_login(client):
-#     response = client.post("api/auth/login",
-#                            data={"username": "email@gmail.com", "password": user_data.get("password")})
-#     assert response.status_code == 401, response.text
-#     data = response.json()
-#     assert data["detail"] == messages.INVALID_EMAIL
+def test_wrong_email_login(client, capsys):
+    try:
+        client.post("api/auth/login", data={"username": "email@gmail.com", "password": user_data.get("password")})
+    except Exception as err:
+        captured = capsys.readouterr()
+        stdout_output = captured.out
+        assert f"401: {messages.INVALID_EMAIL}" in stdout_output
     
 
 @pytest.mark.asyncio
