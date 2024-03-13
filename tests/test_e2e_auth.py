@@ -36,7 +36,6 @@ def test_signup(client, monkeypatch):
     # assert mock_send_email.call_count == 1
 
 
-
 def test_repeat_signup(client, monkeypatch, mock_send_email, capsys):
     try:
         monkeypatch.setattr("src.routres.auth.send_email", mock_send_email)
@@ -46,15 +45,6 @@ def test_repeat_signup(client, monkeypatch, mock_send_email, capsys):
         captured = capsys.readouterr()
         stdout_output = captured.out
         assert f"409: {messages.ACCOUNT_EXIST}" in stdout_output
-
-
-def test_not_confirmed_login(client, capsys):
-    try:
-        client.post("api/auth/login", data={"username": user_data.get("email"), "password": user_data.get("password")})
-    except Exception as err:
-        captured = capsys.readouterr()
-        stdout_output = captured.out
-        assert f"401: {messages.EMAIL_NOT_CONFIRMED}" in stdout_output
 
 
 @pytest.mark.asyncio
@@ -74,16 +64,6 @@ async def test_login(client):
     assert "refresh_token" in data
     assert "token_type" in data
 
-    
-def test_wrong_login_password(client, capsys):
-    try:
-        response = client.post("api/auth/login",
-                           data={"username": user_data.get("email"), "password": "idontknow"})
-    except Exception as err:
-        captured = capsys.readouterr()
-        stdout_output = captured.out
-        assert f"401: {messages.INVALID_PASSWORD}" in stdout_output
-
 
 def test_wrong_email_login(client, capsys):
     try:
@@ -94,13 +74,23 @@ def test_wrong_email_login(client, capsys):
         assert f"401: {messages.INVALID_EMAIL}" in stdout_output
     
 
-@pytest.mark.asyncio
-async def test_confirmed_email(get_email_token, client): 
-    token = get_email_token
-    response = client.get(f"api/auth/confirmed_email/{token}")
-    assert response.status_code == 200, response.text
-    data = response.json()
-    assert data["message"] == messages.EMAIL_ALREADY_CONFIRMED
+def test_not_confirmed_login(client, capsys):
+    try:
+        client.post("api/auth/login", data={"username": user_data.get("email"), "password": user_data.get("password")})
+    except Exception as err:
+        captured = capsys.readouterr()
+        stdout_output = captured.out
+        assert f"401: {messages.EMAIL_NOT_CONFIRMED}" in stdout_output
+
+
+def test_wrong_password_login(client, capsys):
+    try:
+        response = client.post("api/auth/login",
+                           data={"username": user_data.get("email"), "password": "idontknow"})
+    except Exception as err:
+        captured = capsys.readouterr()
+        stdout_output = captured.out
+        assert f"401: {messages.INVALID_PASSWORD}" in stdout_output
 
 
 def test_validation_error_login(client):
@@ -109,7 +99,15 @@ def test_validation_error_login(client):
     assert response.status_code == 422, response.text
     data = response.json()
     assert "detail" in data
+    
 
+@pytest.mark.asyncio
+async def test_confirmed_email(get_email_token, client): 
+    token = get_email_token
+    response = client.get(f"api/auth/confirmed_email/{token}")
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert data["message"] == messages.EMAIL_ALREADY_CONFIRMED
 
 
 @pytest.mark.asyncio  
@@ -129,3 +127,36 @@ async def test_request_email(client, monkeypatch):
         assert "password" not in data
 
 
+@pytest.mark.asyncio
+async def test_already_confirmed_email(get_email_token, client):
+    async with TestingSessionLocal() as session:
+        current_user = await session.execute(select(User).where(User.email == user_data.get("email")))
+        current_user = current_user.scalar_one_or_none()
+        if current_user:
+            current_user.confirmed = True
+            assert current_user.email == user_data.get("email")
+            await session.commit()
+    
+    token = get_email_token
+    response = client.get(f"api/auth/confirmed_email/{token}")
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert data["message"] == messages.EMAIL_ALREADY_CONFIRMED
+
+
+@pytest.mark.asyncio
+async def test_request_reset_password(client, monkeypatch):
+    async with TestingSessionLocal() as session:
+        current_user = await session.execute(select(User).where(User.email == user_data.get("email")))
+        current_user = current_user.scalar_one_or_none()
+        if current_user:
+            current_user.confirmed = False
+            await session.commit()
+    print(current_user)
+    mock_send_email = Mock()
+    monkeypatch.setattr("src.routres.auth.request_email", mock_send_email)
+    response = client.post("api/auth/request_email", json=user_data)
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert data["message"] == messages.CHECK_EMAIL
+    assert "password" not in data
